@@ -1,54 +1,55 @@
-interface DirectorInterface {
-  workFromHome(): string;
-  getCoffeeBreak(): string;
-  workDirectorTasks(): string;
+export interface Teacher {
+  readonly firstName: string;
+  readonly lastName: string;
+  fullTimeEmployee: boolean;
+  yearsOfExperience?: number;
+  location: string;
+  [index: string]: any;
 }
 
-interface TeacherInterface {
-  workFromHome(): string;
-  getCoffeeBreak(): string;
-  workTeacherTasks(): string;
+export interface Directors extends Teacher {
+  numberOfReports: number;
 }
 
-export class Director implements DirectorInterface {
-  workFromHome = () => "Working from home";
-  getCoffeeBreak = () => "Getting a coffee break";
-  workDirectorTasks = () => "Getting to director tasks";
+export interface printTeacherFunction {
+  (firstName: string, lastName: string): string;
 }
 
-export class Teacher implements TeacherInterface {
-  workFromHome = () => "Cannot work from home";
-  getCoffeeBreak = () => "Cannot have a break";
-  workTeacherTasks = () => "Getting to work";
+export function printTeacher(firstName: string, lastName: string): string {
+  return `${firstName[0]}. ${lastName}`;
 }
 
-export const createEmployee = (salary: number | string): Teacher | Director =>
-  Number(salary) < 500 ? new Teacher() : new Director();
-
-export function isDirector(
-  employee: TeacherInterface | DirectorInterface
-): employee is Director {
-  return (employee as Director).workDirectorTasks !== undefined;
+export interface IStudentClassConstructor {
+  new (firstName: string, lastName: string): IStudentClass;
 }
 
-export function executeWork(
-  employee: DirectorInterface | TeacherInterface
-): string {
-  let res = undefined;
-  isDirector(employee)
-    ? (res = employee.workDirectorTasks())
-    : (res = employee.workTeacherTasks());
-  return res;
+export interface IStudentClass {
+  workOnHomework(): string;
+  displayName(): string;
 }
-type Subjects = "Math" | "History";
 
-export function teachClass(todayClass: Subjects): string {
-  if (todayClass === "Math") {
-    return "Teaching Math";
-  } else if (todayClass === "History") {
-    return "Teaching History";
+export class StudentClass implements IStudentClass {
+  private _firstName!: string;
+  private _lastName!: string;
+
+  constructor(firstName: string, lastName: string) {
+    this._firstName = firstName;
+    this._lastName = lastName;
+  }
+
+  workOnHomework() {
+    return "Currently working";
+  }
+
+  displayName() {
+    return this._firstName;
   }
 }
 
-console.log(teachClass("Math"));
-console.log(teachClass("History"));
+export function createStudent(
+  ctor: IStudentClassConstructor,
+  firstName: string,
+  lastName: string
+): IStudentClass {
+  return new ctor(firstName, lastName);
+}
